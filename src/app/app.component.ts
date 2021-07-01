@@ -30,6 +30,7 @@ class Invoice{
 })
 export class AppComponent {
   invoice = new Invoice();
+  WordsPerPage = 40;
 
   generatePDF(action = 'open') {
     let docDefinition: any = {
@@ -144,9 +145,9 @@ export class AppComponent {
       content: [
         // { text: 'Voca Header1', style: 'header', alignment: 'center'}, {text: 'Voca Header2', style: 'header', alignment: 'center'},
         {
-          sytle: 'header',
+          style: 'header',
           table: {
-            widths: ['50%', '50%'],
+            widths: this.WordsPerPage < 40 ? ['4%', '48%', '48%'] :  ['4%', '23%', '23%', '4%', '23%', '23%'],
             body:  body,
           }
         },
@@ -196,7 +197,7 @@ export class AppComponent {
 
   products = [{word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3'}]
   getTableBody() {
-    const pages = [1, 2, 3, 4];
+    const pages = [0, 1, 2];
     const pagesBody: any = pages.map(page => {
       const index = page;
       return this.getPageBody(index, this.products);
@@ -210,10 +211,40 @@ export class AppComponent {
     const pageBody: any = [
       // [pageHeader],
       pageHeader,
-      [{text: 'textHeader: Index: ' + index, style:'textHeader'}, {text: 'TableHeader:Col2', style: 'textHeader'}],
-      ...items.map(p => ([{text: p.word, style: 'textBody'}, {text: p.han, style: 'textBody'}])),
+      this.WordsPerPage < 40
+      ? [
+        {text: 'No', style: 'textHeader'},
+        {text: 'English', style: 'textHeader'},
+        {text: 'Korean', style: 'textHeader'}
+      ]
+      : [
+        {text: 'No', style: 'textHeader'},
+        {text: 'English', style: 'textHeader'},
+        {text: 'Korean', style: 'textHeader'},
+        {text: 'No', style: 'textHeader'},
+        {text: 'English', style: 'textHeader'},
+        {text: 'Korean', style: 'textHeader'}
+      ],
+      ...items.map((p, i) => {
+        return this.WordsPerPage < 40 ?
+        ([
+          {text: '' + (index * this.WordsPerPage + i+1), style: 'textBody'},
+          {text: p.word, style: 'textBody'},
+          {text: p.han, style: 'textBody'}
+        ])
+        : ([
+          {text: '' + (index * this.WordsPerPage + i+1), style: 'textBody'},
+          {text: p.word, style: 'textBody'},
+          {text: p.han, style: 'textBody'},
+          {text: '' + (index * this.WordsPerPage + 20 + i+1), style: 'textBody'},
+          {text: p.word, style: 'textBody'},
+          {text: p.han, style: 'textBody'}
+        ])
+      }),
     ];
-    const pageBreak = [{text: 'Page Break', pageBreak: 'after', colSpan: 2}, {}];
+    const pageBreak = this.WordsPerPage < 40
+      ? [{text: 'Page Break', pageBreak: 'after', colSpan: 3}, {}, {}]
+      : [{text: 'Page Break', pageBreak: 'after', colSpan: 6}, {}, {}, {}, {}, {}];
     // ! SKIP last page
     pageBody.push(pageBreak);
     return pageBody;
@@ -233,7 +264,7 @@ export class AppComponent {
             width: '*',
             stack: [
               {text: 'Voca Title'},
-              {text: 'Chapter: ' + index, style: 'textBody'}
+              {text: 'Chapter: ' + (index + 1), style: 'textBody'}
             ],
             style: 'pageHeader',
             alignment: 'center'
@@ -266,10 +297,10 @@ export class AppComponent {
       //     ],
       //   ],
       // },
-      style: 'pageHeader', colSpan: 2
+      style: 'pageHeader', colSpan:  this.WordsPerPage < 40 ? 3 : 6
     }
-    return [header, {}];
-    // return [{text: 'TableHeader: Index: ' + index, style: 'pageHeader', colSpan: 2, alignment: 'center'}, {}]
+    const ddHeader = this.WordsPerPage < 40 ? [header, {}, {}] : [header, {}, {}, {}, {}, {}]
+    return ddHeader; // [header, {}, {}];
   }
 
   addProduct(){
