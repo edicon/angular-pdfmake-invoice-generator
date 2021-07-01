@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-secondary d-flex justify-content-between">
-    <a class="navbar-brand" href="#">INVOICE GENERATOR</a>
+    <a class="navbar-brand" href="#">PDF GENERATOR</a>
     <div>
         <a class="text-white" href="https://github.com/ngdevelop-tech/angular-pdfmake-invoice-generator" target="_blank"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>
     </div>
@@ -7,7 +7,7 @@
 <form #invoiceForm="ngForm">
     <div class="container-fluid pt-2 mb-5">
         <div class="row">
-            <div class="col-md-8">
+            <!-- <div class="col-md-8">
                 <div class="card border-secondary">
                     <div class="card-body">
                         <h4 class="card-title">Customer Details</h4>
@@ -93,16 +93,16 @@
                     </div>
                 </div>
 
-            </div>
+            </div> -->
             <div class="col-md-4">
                 <button type="button" class="btn btn-secondary btn-lg btn-block"
-                    (click)="invoiceForm.valid ? generatePDF('download') : ''">Download Invoice</button>
+                    (click)="invoiceForm.valid ? generatePDF('download') : ''">Download PDF</button>
                 <button type="button" class="btn btn-secondary btn-lg btn-block"
                     (click)="invoiceForm.valid ? generatePDF('print') : ''">Print
-                    Invoice</button>
+                    PDF</button>
                 <button type="submit" class="btn btn-secondary btn-lg btn-block"
                     (click)="invoiceForm.valid ? generatePDF() : ''">Open
-                    Invoice</button>
+                    PDF</button>
             </div>
         </div>
     </div>

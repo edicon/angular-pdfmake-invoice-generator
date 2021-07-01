@@ -14,12 +14,12 @@ class Invoice{
   address: string;
   contactNo: number;
   email: string;
-  
+
   products: Product[] = [];
   additionalDetails: string;
 
   constructor(){
-    // Initially one empty product row we will show 
+    // Initially one empty product row we will show
     this.products.push(new Product());
   }
 }
@@ -29,10 +29,10 @@ class Invoice{
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  invoice = new Invoice(); 
-  
+  invoice = new Invoice();
+
   generatePDF(action = 'open') {
-    let docDefinition = {
+    let docDefinition: any = {
       content: [
         {
           text: 'ELECTRONIC SHOP',
@@ -68,7 +68,7 @@ export class AppComponent {
                 text: `Date: ${new Date().toLocaleString()}`,
                 alignment: 'right'
               },
-              { 
+              {
                 text: `Bill No : ${((Math.random() *1000).toFixed(0))}`,
                 alignment: 'right'
               }
@@ -96,7 +96,7 @@ export class AppComponent {
         },
         {
             text: this.invoice.additionalDetails,
-            margin: [0, 0 ,0, 15]          
+            margin: [0, 0 ,0, 15]
         },
         {
           columns: [
@@ -121,23 +121,159 @@ export class AppComponent {
           bold: true,
           decoration: 'underline',
           fontSize: 14,
-          margin: [0, 15,0, 15]          
+          margin: [0, 15,0, 15]
         }
       }
     };
 
+    docDefinition = this.getDocDefinition();
+
     if(action==='download'){
       pdfMake.createPdf(docDefinition).download();
     }else if(action === 'print'){
-      pdfMake.createPdf(docDefinition).print();      
+      pdfMake.createPdf(docDefinition).print();
     }else{
-      pdfMake.createPdf(docDefinition).open();      
+      pdfMake.createPdf(docDefinition).open();
     }
 
+  }
+
+  getDocDefinition() {
+    const body = this.getTableBody();
+    const dd = {
+      content: [
+        // { text: 'Voca Header1', style: 'header', alignment: 'center'}, {text: 'Voca Header2', style: 'header', alignment: 'center'},
+        {
+          sytle: 'header',
+          table: {
+            widths: ['50%', '50%'],
+            body:  body,
+          }
+        },
+        // {text: 'PageBreak: Before', pageBreak: 'before', style: 'subheader'},
+        // 'Next Page',
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10]
+        },
+        subheader: {
+          fontSize: 16,
+          bold: true,
+          margin: [0, 10, 0, 5]
+        },
+        pageHeader: {
+          bold: true,
+          fontSize: 15,
+          color: 'black',
+          alignment: 'center',
+          margin: [0, 1, 0, 1],
+          fillColor: '#eeeeff',
+        },
+        textHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'black',
+          alignment: 'center',
+          margin: [0, 5, 0, 5],
+          fillColor: '#eeeeee',
+        },
+        textBody: {
+          fontSize: 10,
+          alignment: 'center',
+          margin: [0, 3, 0, 3]
+        },
+      },
+      defaultStyle: {
+        // alignment: 'justify'
+      }
+    }
+
+    return dd;
+  }
+
+  products = [{word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3'}]
+  getTableBody() {
+    const pages = [1, 2, 3, 4];
+    const pagesBody: any = pages.map(page => {
+      const index = page;
+      return this.getPageBody(index, this.products);
+    });
+    const pagesDD = pagesBody.flat();
+    return pagesDD;
+  }
+
+  getPageBody(index: number, items: any[]) {
+    const pageHeader = this.getPageHeader(index);
+    const pageBody: any = [
+      // [pageHeader],
+      pageHeader,
+      [{text: 'textHeader: Index: ' + index, style:'textHeader'}, {text: 'TableHeader:Col2', style: 'textHeader'}],
+      ...items.map(p => ([{text: p.word, style: 'textBody'}, {text: p.han, style: 'textBody'}])),
+    ];
+    const pageBreak = [{text: 'Page Break', pageBreak: 'after', colSpan: 2}, {}];
+    // ! SKIP last page
+    pageBody.push(pageBreak);
+    return pageBody;
+  }
+
+  getPageHeader(index: number) {
+    const header = {
+        // alignment: 'justify',
+        columns: [
+          {
+            width: '15%',
+            text: 'Academy',
+            style: 'textBody',
+            alignment: 'left'
+          },
+          {
+            width: '*',
+            stack: [
+              {text: 'Voca Title'},
+              {text: 'Chapter: ' + index, style: 'textBody'}
+            ],
+            style: 'pageHeader',
+            alignment: 'center'
+          },
+          {
+            width: '15%',
+            stack: [
+                    {text: 'Date: xxxx-xx-xx'},
+                    {text: 'Name:           '}
+                  ],
+            style: 'textBody',
+            alignment: 'left'
+          },
+        ],
+      // table: {
+      //   widths: ['auto', '*', 'auto'],
+      //   body: [
+      //     [
+      //       {stack: [
+      //         {text: 'Academy Name'}
+      //       ], border: [false, false, false, false], style: 'textBody'},
+      //       {stack: [
+      //         {text: 'Voca Title'},
+      //         {text: 'Chapter:' + index}
+      //       ], border: [false, false, false, false]},
+      //       {stack: [
+      //         {text: 'Date'},
+      //         {text: 'Name'}
+      //       ], border: [false, false, false, false], style: 'textBody'},
+      //     ],
+      //   ],
+      // },
+      style: 'pageHeader', colSpan: 2
+    }
+    return [header, {}];
+    // return [{text: 'TableHeader: Index: ' + index, style: 'pageHeader', colSpan: 2, alignment: 'center'}, {}]
   }
 
   addProduct(){
     this.invoice.products.push(new Product());
   }
-  
+
 }
