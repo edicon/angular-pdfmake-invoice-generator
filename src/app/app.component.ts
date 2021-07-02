@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PdfMakeService } from './pdf-make.service';
 
 import pdfMake from "pdfmake/build/pdfmake";
 // import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -45,6 +46,10 @@ class Invoice{
 export class AppComponent {
   invoice = new Invoice();
   WordsPerPage = 40;
+
+  constructor(private pdfMakeService: PdfMakeService) {
+
+  }
 
   generatePDF(action = 'open') {
     let docDefinition: any = {
@@ -144,11 +149,14 @@ export class AppComponent {
     docDefinition = this.getDocDefinition();
 
     if(action==='download'){
-      pdfMake.createPdf(docDefinition).download();
+      // pdfMake.createPdf(docDefinition).download();
+      this.pdfMakeService.downloadPdf(docDefinition);
     }else if(action === 'print'){
-      pdfMake.createPdf(docDefinition).print();
+      // pdfMake.createPdf(docDefinition).print();
+      this.pdfMakeService.printPdf(docDefinition);
     }else{
-      pdfMake.createPdf(docDefinition).open();
+      this.pdfMakeService.openPdf(docDefinition);
+      // pdfMake.createPdf(docDefinition).open();
     }
 
   }
@@ -219,8 +227,8 @@ export class AppComponent {
 
   pages = [0, 1, 2];
   products = [
-    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
-    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
+    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글, han3: 한글, han3: 한글'},
+    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글, han3: 한글, han3: 한글'},
     {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
     {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
     {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
