@@ -6,17 +6,17 @@ import pdfFonts from "./vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 pdfMake.fonts = {
   // download default Roboto font from cdnjs.com
-  // Roboto: {
-  //   normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
-  //   bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
-  //   italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
-  //   bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
-  // },
+  Roboto: {
+    normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+    bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+    italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+    bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+  },
   NotoSansSC: {
     normal: 'NotoSansKR-Regular.otf',
     bold: 'NotoSansKR-Bold.otf',
   }
- }
+}
 
 class Product{
   name: string;
@@ -157,7 +157,7 @@ export class AppComponent {
     const body = this.getTableBody();
     const dd = {
       content: [
-        // { text: 'Voca Header1', style: 'header', alignment: 'center'}, {text: 'Voca Header2', style: 'header', alignment: 'center'},
+        // { text: 'Voca Header1', style: 'header', alignment: 'center'},
         {
           style: 'header',
           table: {
@@ -172,7 +172,7 @@ export class AppComponent {
         header: {
           fontSize: 18,
           bold: true,
-          margin: [0, 0, 0, 10]
+          margin: [0, 10, 0, 0]
         },
         subheader: {
           fontSize: 16,
@@ -198,23 +198,40 @@ export class AppComponent {
         textBody: {
           fontSize: 10,
           alignment: 'center',
-          margin: [0, 3, 0, 3]
+          margin: [0, 6, 0, 6]
+        },
+        textHanBody: {
+          fontSize: 10,
+          font: 'NotoSansSC',
+          alignment: 'center',
+          margin: [0, 6, 0, 6]
         },
       },
       defaultStyle: {
         // alignment: 'justify'
-        font: 'NotoSansSC',
-        // font: 'Roboto'
+        // font: 'NotoSansSC',
+        font: 'Roboto'
       }
     }
 
     return dd;
   }
 
-  products = [{word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'}]
+  pages = [0, 1, 2];
+  products = [
+    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
+    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
+    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
+    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
+    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
+    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
+    {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'},
+    // {word: 'word3', han: 'han3: 한글'},
+    // {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
+    // {word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'},
+  ]
   getTableBody() {
-    const pages = [0, 1, 2];
-    const pagesBody: any = pages.map(page => {
+    const pagesBody: any = this.pages.map(page => {
       const index = page;
       return this.getPageBody(index, this.products);
     });
@@ -223,7 +240,10 @@ export class AppComponent {
   }
 
   getPageBody(index: number, items: any[]) {
-    const pageHeader = this.getPageHeader(index);
+    // ! Change Data
+    const date = '2021.07.02';
+    let showMode = 'ko'
+    const pageHeader = this.getPageHeader(index, date);
     const pageBody: any = [
       // [pageHeader],
       pageHeader,
@@ -242,36 +262,38 @@ export class AppComponent {
         {text: 'Korean', style: 'textHeader'}
       ],
       ...items.map((p, i) => {
+        // const word = p,word;
+        // const sentense = p.han;
         return this.WordsPerPage < 40 ?
         ([
           {text: '' + (index * this.WordsPerPage + i+1), style: 'textBody'},
-          {text: p.word, style: 'textBody'},
-          {text: p.han, style: 'textBody'}
+          {text: showMode === 'ko' ? '' : p.word, style: 'textBody'},
+          {text: showMode === 'en' ? '' : p.han, style: 'textHanBody'}
         ])
         : ([
           {text: '' + (index * this.WordsPerPage + i+1), style: 'textBody'},
-          {text: p.word, style: 'textBody'},
-          {text: p.han, style: 'textBody'},
+          {text: showMode === 'ko' ? '' : p.word, style: 'textBody'},
+          {text: showMode == 'en' ? '' : p.han, style: 'textHanBody'},
           {text: '' + (index * this.WordsPerPage + 20 + i+1), style: 'textBody'},
-          {text: p.word, style: 'textBody'},
-          {text: p.han, style: 'textBody'}
+          {text: showMode === 'ko' ? '' : p.word, style: 'textBody'},
+          {text: showMode === 'en' ? '' : p.han, style: 'textHanBody'}
         ])
       }),
     ];
-    const pageBreak = this.WordsPerPage < 40
-      ? [{text: '참고: Page Break', style: 'textBody', pageBreak: 'after', colSpan: 3}, {}, {}]
-      : [{text: '참고: Page Break', style: 'textBody', pageBreak: 'after', colSpan: 6}, {}, {}, {}, {}, {}];
-    // ! SKIP last page
-    pageBody.push(pageBreak);
+    // const pageBreak = this.WordsPerPage < 40
+    //   ? [{text: '참고: Page Break', style: 'textBody', pageBreak: 'before', colSpan: 3}, {}, {}]
+    //   : [{text: '참고: Page Break', style: 'textBody', pageBreak: 'before', colSpan: 6}, {}, {}, {}, {}, {}];
+    // // ! SKIP last page
+    // pageBody.push(pageBreak);
     return pageBody;
   }
 
-  getPageHeader(index: number) {
+  getPageHeader(index: number, date) {
     const header = {
         // alignment: 'justify',
         columns: [
           {
-            width: '15%',
+            width: '18%',
             text: 'Academy',
             style: 'textBody',
             alignment: 'left'
@@ -286,9 +308,9 @@ export class AppComponent {
             alignment: 'center'
           },
           {
-            width: '15%',
+            width: '18%',
             stack: [
-                    {text: 'Date: xxxx-xx-xx'},
+                    {text: 'Date: ' + date },
                     {text: 'Name:           '}
                   ],
             style: 'textBody',
@@ -313,7 +335,9 @@ export class AppComponent {
       //     ],
       //   ],
       // },
-      style: 'pageHeader', colSpan:  this.WordsPerPage < 40 ? 3 : 6
+      style: 'pageHeader',
+      colSpan:  this.WordsPerPage < 40 ? 3 : 6,
+      pageBreak: index !== 0 ? 'before' : ''
     }
     const ddHeader = this.WordsPerPage < 40 ? [header, {}, {}] : [header, {}, {}, {}, {}, {}]
     return ddHeader; // [header, {}, {}];
