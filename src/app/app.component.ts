@@ -1,8 +1,22 @@
 import { Component } from '@angular/core';
 
 import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+// import pdfFonts from "pdfmake/build/vfs_fonts";
+import pdfFonts from "./vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.fonts = {
+  // download default Roboto font from cdnjs.com
+  // Roboto: {
+  //   normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+  //   bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+  //   italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+  //   bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+  // },
+  NotoSansSC: {
+    normal: 'NotoSansKR-Regular.otf',
+    bold: 'NotoSansKR-Bold.otf',
+  }
+ }
 
 class Product{
   name: string;
@@ -189,13 +203,15 @@ export class AppComponent {
       },
       defaultStyle: {
         // alignment: 'justify'
+        font: 'NotoSansSC',
+        // font: 'Roboto'
       }
     }
 
     return dd;
   }
 
-  products = [{word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3'}]
+  products = [{word: 'word1', han: 'han1'}, {word: 'word2', han: 'han2'}, {word: 'word3', han: 'han3: 한글'}]
   getTableBody() {
     const pages = [0, 1, 2];
     const pagesBody: any = pages.map(page => {
@@ -243,8 +259,8 @@ export class AppComponent {
       }),
     ];
     const pageBreak = this.WordsPerPage < 40
-      ? [{text: 'Page Break', pageBreak: 'after', colSpan: 3}, {}, {}]
-      : [{text: 'Page Break', pageBreak: 'after', colSpan: 6}, {}, {}, {}, {}, {}];
+      ? [{text: '참고: Page Break', style: 'textBody', pageBreak: 'after', colSpan: 3}, {}, {}]
+      : [{text: '참고: Page Break', style: 'textBody', pageBreak: 'after', colSpan: 6}, {}, {}, {}, {}, {}];
     // ! SKIP last page
     pageBody.push(pageBreak);
     return pageBody;
